@@ -1,10 +1,44 @@
 <?php
 namespace app\index\controller;
+use think\Controller;
+use think\Request;
 
-class Index
-{
-    public function index()
-    {
-        return '<style type="text/css">*{ padding: 0; margin: 0; } .think_default_text{ padding: 4px 48px;} a{color:#2E5CD5;cursor: pointer;text-decoration: none} a:hover{text-decoration:underline; } body{ background: #fff; font-family: "Century Gothic","Microsoft yahei"; color: #333;font-size:18px} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.6em; font-size: 42px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p> ThinkPHP V5<br/><span style="font-size:30px">十年磨一剑 - 为API开发设计的高性能框架</span></p><span style="font-size:22px;">[ V5.0 版本由 <a href="http://www.qiniu.com" target="qiniu">七牛云</a> 独家赞助发布 ]</span></div><script type="text/javascript" src="https://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script><script type="text/javascript" src="https://e.topthink.com/Public/static/client.js"></script><think id="ad_bd568ce7058a1091"></think>';
+class Index extends Controller {
+    public function index() {
+        if (input('?post.username')) {
+            $username = input('post.username');
+            session('name',$username,'think');
+            Trace(session('name'));
+        }
+        if (session('?name')) {
+            return view('index');
+        } else {
+            return view('index/login');
+        }
+    }
+
+    public function welcome() {
+        $data = array(
+            'php_version' => PHP_VERSION,
+            'php_sapi_name' => php_sapi_name(),
+            'php_os' => PHP_OS,
+            'upload_max_filesize' => get_cfg_var ("upload_max_filesize")?get_cfg_var ("upload_max_filesize"):"不允许上传附件",
+            'max_execution_time' => get_cfg_var("max_execution_time")."s",
+            // 'mysql_get_server_info' => mysql_get_server_info(),
+        );
+        $this->assign('time',time());
+        return $this->fetch('welcome',$data);
+    }
+
+    public function clear_temp_ahce() {
+        array_map('unlink', glob(TEMP_PATH . '/*.php'));
+        rmdir(TEMP_PATH);
+        $this->redirect('/admin');
+    }
+
+    public function exit() {
+        session(null);
+        $this->redirect('/admin');
     }
 }
+?>
