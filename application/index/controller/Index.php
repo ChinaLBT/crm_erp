@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use think\Controller;
 use think\Request;
+use think\Model;
 
 class Index extends Controller {
     public function index() {
