@@ -1,56 +1,69 @@
-{include file="public/header" /} 
+{include file="public/header" /}
 
 <body class="login-bg">
-    
+
     <div class="login layui-anim layui-anim-up">
         <div class="message">ChinaLBT v1.0 -管理登录</div>
         <div id="darkbannerwrap"></div>
-        
-        <form method="post" class="layui-form" >
-            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+
+        <form method="post" class="layui-form">
+            <input name="name" placeholder="用户名" type="text" lay-verify="required" class="layui-input">
             <hr class="hr15">
-            <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <input name="passwd" lay-verify="required" placeholder="密码" type="password" class="layui-input">
             <hr class="hr15">
-            <input name="code" lay-verify="required" placeholder="验证码"  type="text" class="layui-input">
-            <hr class="hr15">
-            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
-            <hr class="hr20" >
+            <!-- <input name="code" lay-verify="required" placeholder="验证码"  type="text" class="layui-input">
+            <hr class="hr15"> -->
+            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="button">
+            <hr class="hr20">
         </form>
     </div>
 
     <script>
-        $(function  () {
-            layui.use('form', function(){
-              var form = layui.form;
-              // layer.msg('玩命卖萌中', function(){
-              //   //关闭后的操作
-              //   });
-              //监听提交
-              form.on('submit(login)', function(data){
-                console.log(data.field.username)
-                $.ajax({
-                    url:'/admin',
-                    type:'POST',
-                    data:data.field,
-                    dataType:jsonp,
-                    success:function(res) {
+        $(function () {
+            layui.use('form', function () {
+                var form = layui.form;
+                //   layer.msg('玩命卖萌中', function(){
+                //     //关闭后的操作
+                //     });
+                //   监听提交
+                form.on('submit(login)', function (data) {
+                    console.log(data.field);
+                    $.ajax({
+                        url: '/',
+                        type: 'POST',
+                        data: data.field,
+                        dataType: 'json',
+                        success: function (res) {
+                            console.log(res.length)
+                            if(res.length>1) {
+                                layer.msg(JSON.stringify(res));
+                            } else {
+                                location=location;
+                            }
+                        }
+                    });
+                    // layer.msg(JSON.stringify(data.field), function () {
+                    //     console.log(data)
+                    //     $.ajax({
+                    //         url: '/',
+                    //         type: 'POST',
+                    //         data: data.field,
+                    //         // dataType:jsonp,
+                    //         success: function (res) {
 
-                        // console.log(res);
-                    }
+                    //             console.log("123");
+                    //         }
+                    //     });
+                    // });
+                    // return false;
                 });
-                // layer.msg(JSON.stringify(data.field),function(){
-                //     console.log(data)
-                //     // location.href='/admin'
-                // });
-                return false;
-              });
             });
         })
 
-        
+
     </script>
 
-    
+
     <!-- 底部结束 -->
 </body>
 {include file="public/footer" /}

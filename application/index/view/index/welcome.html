@@ -2,9 +2,11 @@
 
 <body>
     <div class="x-body layui-anim layui-anim-up">
-        <blockquote class="layui-elem-quote">欢迎管理员：<i class="iconfont">&#xe6b8;</i>
-            <span class="x-red">{$Think.session.name}</span>当前时间:<i class="iconfont">&#xe6bb;</i> {$time|date="Y-m-d
-            H:i:s",###}</blockquote>
+        <blockquote class="layui-elem-quote" style="display:flex;justify-content: space-between">
+            <span>欢迎管理员:{$Think.session.name}</span>
+            <span>上次登录时间:{$time|date="Y-m-d H:i:s",###}</span>
+            <span>上次登录IP:255.255.255</span>
+        </blockquote>
         <fieldset class="layui-elem-field">
             <legend>数据统计</legend>
             <div class="layui-field-box">
@@ -17,16 +19,16 @@
                                     <ul class="layui-row layui-col-space10 layui-this">
                                         <li class="layui-col-xs2">
                                             <a href="javascript:;" class="x-admin-backlog-body">
-                                                <h3>文章数</h3>
+                                                <h3>客户数</h3>
                                                 <p>
-                                                    <cite>66</cite></p>
+                                                    <cite>{$cust_all}</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs2">
                                             <a href="javascript:;" class="x-admin-backlog-body">
-                                                <h3>会员数</h3>
+                                                <h3>删除客户</h3>
                                                 <p>
-                                                    <cite>12</cite></p>
+                                                    <cite>{$cust_del}</cite></p>
                                             </a>
                                         </li>
                                         <li class="layui-col-xs2">
@@ -115,7 +117,7 @@
                         </tr>
                         <tr>
                             <th>MYSQL版本</th>
-                            <td></td>
+                            <td>{mysql_get_server_info}</td>
                         </tr>
                         <tr>
                             <th>ThinkPHP</th>
