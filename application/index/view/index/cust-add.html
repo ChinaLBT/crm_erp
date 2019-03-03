@@ -1,0 +1,191 @@
+{include file="public/header" /}
+
+<body>
+    <div class="x-body">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="name" class="layui-form-label">
+                    <span class="x-red">*</span>用户名
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="name" name="name" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="phone" class="layui-form-label">
+                    <span class="x-red">*</span>手机号
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off"
+                        class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="sex" class="layui-form-label">
+                    <span class="x-red">*</span>性别
+                </label>
+                <div class="layui-input-inline">
+                    <select id="sex" name="sex" lay-filter="sex" class="valid">
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+            </div>
+                <div class="layui-row">
+                    <div class="layui-form-item" id="x-city">
+                        <label class="layui-form-label"><span class="x-red">*</span>省市地址</label>
+                        <div class="layui-input-inline">
+                            <select name="province" lay-filter="province">
+                                <option value="">请选择省</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="city" lay-filter="city">
+                                <option value="">请选择市</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="area" lay-filter="area">
+                                <option value="">请选择县/区</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="address" class="layui-form-label">
+                        <span class="x-red">*</span>详细地址
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="address" name="address" required="" lay-verify="required"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label for="other" class="layui-form-label">
+                        备注
+                    </label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" id="other" name="other" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label">
+                    </label>
+                    <button class="layui-btn" lay-filter="add" lay-submit="">
+                        增加
+                    </button>
+                </div>
+        </form>
+    </div>
+    <!-- <script src="http://api.map.baidu.com/api?v=1.4" type="text/javascript"></script> -->
+    <script type="text/javascript" src="__STATIC__/js/xcity.js"></script>
+    <script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=1.4.13&key=03b45b6b6d2899f6cc43ede6292abe36&plugin=AMap.Geocoder"></script>
+    <script>
+        layui.use(['form', 'code'], function () {
+            form = layui.form;
+            layui.code();
+            $('#x-city').xcity('山东', '济南市', '市辖区');
+
+        });
+        var option = {
+            enableHighAccuracy: true, //设置提升定位的精准度
+            maximumAge: 0,  //禁用缓存
+            timeout: 30000  //开始获取定位信息30秒后超时
+        }
+        if (navigator.geolocation) {  //判断是否支持Geolocation API
+            navigator.geolocation.getCurrentPosition(showPosition, showError, option)
+        }
+        function showPosition(position) {
+            lat = position.coords.latitude;  //获取纬度
+            lon = position.coords.longitude;  //获取经度
+            geocoder(lon, lat, null);
+        }
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("您拒绝了地理定位服务");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("无法获取您的位置");
+                    break;
+                case error.TIMEOUT:
+                    alert("超时");
+                    break;
+            }
+        }
+
+        function geocoder(lnglatX, lnglatY, cityCode) {
+            var geocoder = new AMap.Geocoder({
+                city: cityCode, //城市，默认：“全国”
+                radius: 100 //范围，默认：500
+            });
+            geocoder.getAddress([lnglatX, lnglatY], function (status, result) {
+                if (status === 'complete' && result.info === 'OK') {
+                    geocoder_CallBack(result);
+                }
+            });
+        }
+
+        function geocoder_CallBack(data) {
+            var geocode = data.regeocode;
+            console.log(geocode);
+            var province = geocode.addressComponent.province.slice(0, -1);
+            $('#x-city').xcity(province, geocode.addressComponent.city, geocode.addressComponent.district);
+            $('#address').val(geocode.addressComponent.township + geocode.addressComponent.neighborhood + geocode.addressComponent.building);
+        }
+
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form
+                , layer = layui.layer;
+
+            //自定义验证规则
+            form.verify({
+                nikename: function (value) {
+                    if (value.length < 5) {
+                        return '昵称至少得5个字符啊';
+                    }
+                }
+                , pass: [/(.+){6,12}$/, '密码必须6到12位']
+                , repass: function (value) {
+                    if ($('#L_pass').val() != $('#L_repass').val()) {
+                        return '两次密码不一致';
+                    }
+                }
+            });
+
+            //监听提交
+            form.on('submit(add)', function (data) {
+                console.log(data);
+                //发异步，把数据提交给php
+                $.ajax({
+                        url: '/index/custs/cust_add_con',
+                        type: 'POST',
+                        data: data.field,
+                        dataType: 'json',
+                        success: function (res) {
+                            console.log(res)
+                            // if(res.length>1) {
+                            //     layer.msg(JSON.stringify(res));
+                            // } else {
+                            //     location=location;
+                            // }
+                        }
+                    });
+                layer.alert("增加成功", { icon: 6 }, function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                });
+                return false;
+            });
+
+
+        });
+    </script>
+</body>
+
+{include file="public/footer" /}
